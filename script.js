@@ -3,33 +3,42 @@ const userObj = JSON.parse(user);
 console.log(userObj);
 
 const profile = { name: "Taro", Age: 13, gender: "male" };
-const JSONFormat = JSON.stringify(profile);
-console.log(JSONFormat);
+const jsonFormat = JSON.stringify(profile);
+console.log(jsonFormat);
 
-const validationCheck = (targetId, regex, errorId, errorMessage)=>{
+// form課題
+const newBtn = document.getElementById("submitBtn");
+
+// 正規表現はここから
+const nameRegex =  /^[^\x01-\x7E\uFF61-\uFF9F]+$/;
+const ageRegex = /^[0-9]+$/;
+const emailRegex = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/;
+const phoneRegex = /^[0-9]{11}$/;
+
+const validationCheck = (targetId, regex, errorId, message) => {
     const targetText = document.getElementById(targetId).value;
     const checkRegexError = !regex.test(targetText);
     if(targetText === "" || checkRegexError){
         const targetError = document.getElementById(errorId);
-        targetError.textContent = errorMessage;
+        targetError.textContent = createMessage(message);
     }
 }
 
-const newBtn = document.getElementById("submitBtn");
-newBtn.addEventListener("click",()=>{
+const clearErrors = () => {
     const textClear = document.querySelectorAll(".error");
     textClear.forEach(src => src.textContent = "");
-    const validationCheck = (targetId, regex, errorId, errorMessage)=>{
-    const targetText = document.getElementById(targetId).value;
-    const checkRegexError = !regex.test(targetText);
-    if(targetText === "" || checkRegexError){
-        const targetError = document.getElementById(errorId);
-        targetError.textContent = errorMessage;
-        }
-    }
-    
-    validationCheck("nameInput",  /^[^\x01-\x7E\uFF61-\uFF9F]+$/, "nameError",  "正しい名前を入力してください");
-    validationCheck("ageInput", /^[0-9]+$/, "ageError", "正しい年齢を入力してください");
-    validationCheck("emailInput", /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/, "emailError", "正しいメールアドレスを入力してください");
-    validationCheck("phoneInput",  /^[0-9]{11}$/, "phoneError", "正しい電話番号を入力してください");
-});
+}
+
+const createMessage = (message) => {
+    return `正しい${message}を入力してください`;
+}
+
+const allValidationCheck = () => {
+    clearErrors();
+    validationCheck("nameInput", nameRegex, "nameError", createMessage("名前"));
+    validationCheck("ageInput",ageRegex, "ageError", createMessage("年齢"));
+    validationCheck("emailInput", emailRegex, "emailError", createMessage("メールアドレス"));
+    validationCheck("phoneInput", phoneRegex, "phoneError", createMessage("電話番号"));
+}
+
+newBtn.addEventListener("click", allValidationCheck)
